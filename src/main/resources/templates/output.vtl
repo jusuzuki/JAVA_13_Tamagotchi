@@ -1,0 +1,26 @@
+<h1>Make a Tamagotchi</h1>
+
+#if ($inputtedUsername) $inputtedUsername - That's a cool name for a tamagotchi.
+<br>
+$inValidUser <!-- this displays different texts-->
+<br>
+<form action="/play" method="post">
+  <input type="hidden" name="tamagotchiName" value="$inputtedUsername">
+  <button type="submit" class="btn btn-info">Start my $inputtedUsername!</button>
+</form>
+
+#else
+<!--  if username isn't valid, show the form again until it is-->
+<h1>$inValidUser</h1>
+<form action='/output' method='post'>
+  <div class="form-group">
+    <!--input field-->
+    <label for="userInput">What do you want to call your Tamagotchi?</label>
+    <input id="userInput" name="userInput" class="form-control" type="text">
+    <br>
+  </div>
+  <button type="submit" class="btn btn-info">Let's play!</button>
+#end
+<br>
+<br>
+<p><a href="/">want to go again?</a></p>

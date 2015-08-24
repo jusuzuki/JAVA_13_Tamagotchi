@@ -1,0 +1,126 @@
+import java.util.Map;
+import java.util.HashMap;
+import spark.ModelAndView;
+import spark.template.velocity.VelocityTemplateEngine;
+import static spark.Spark.*;
+import java.util.Date;
+import java.util.TimerTask;
+import java.util.Timer;
+
+
+public class App {
+  public static Timer myAppTimer = new Timer();
+  static String statusMessage;
+
+  // App.myAppTimer;
+
+  static Long creationTime = System.currentTimeMillis();
+
+  public static void main(String[] args) {
+
+        staticFileLocation("/public");
+        String layout = "templates/layout.vtl";
+        Tamagotchi myTamagotchi;
+
+        get("/", (request, response) -> {
+          HashMap<String, Object> model = new HashMap<String, Object>();
+          model.put("username", request.session().attribute("username"));
+
+          String inValidUser= "Hi. Please set your Tamagotchi's name below.";
+          model.put("inValidUser", inValidUser);
+
+
+          model.put("template", "templates/input.vtl");
+          return new ModelAndView(model, layout);
+        }, new VelocityTemplateEngine());
+
+        // get("/output", (request, response) -> {
+        //   Map<String, Object> model = new HashMap<String, Object>();
+        //
+        //   // tell user to set tamagotchi name if they came here directly
+        //   String inValidUser= "Please go back and set your Tamagotchi's name.";
+        //   model.put("inValidUser", inValidUser);
+        //
+        //   //set up the hashmap and set the output
+        //
+        //   model.put("template", "templates/output.vtl");
+        //   return new ModelAndView(model, "templates/pingpongoutput.vtl");
+        //   }, new VelocityTemplateEngine());
+
+        post("/output", (request, response) -> {
+
+
+            String inputtedUsername = request.queryParams("userInput");
+            HashMap<String, Object> model = new HashMap<String, Object>();
+
+            //if username is not null or consists of whitespace let the user proceed
+            if (inputtedUsername != null && inputtedUsername.trim().length() > 0){
+              request.session().attribute("inputtedUsername", inputtedUsername);
+              model.put("inputtedUsername", inputtedUsername);
+              String inValidUser= "You are ready to play!";
+              model.put("inValidUser", inValidUser);
+            }
+
+            else{ //let the user know they need to set a username.
+              String inValidUser= "You need to set your Tamagotchi's name first!";
+              model.put("inValidUser", inValidUser);
+
+            }
+              //output
+              model.put("template", "templates/output.vtl");
+              return new ModelAndView(model, layout);
+            }, new VelocityTemplateEngine());
+
+        post("/play", (request, response) -> {
+          HashMap<String, Object> model = new HashMap<String, Object>();
+
+          //Tamagotchi creation date
+          // String dateOutput = Tamagotchi.startPlaying();
+          // model.put("dateOutput", dateOutput);
+
+
+          //start the timer that was instatiated at the top
+          statusMessage = "generic!";
+          myAppTimer.scheduleAtFixedRate(
+            new TimerTask()
+            {
+
+                public void run()
+                {
+                    //String message = "You need to feed me!";
+
+                    // Date timerDate = new Date();
+                    // String timerDateStr = timerDate.toString();
+                    // System.out.println(System.currentTimeMillis());
+                    Long currentTime = System.currentTimeMillis();
+
+                    if (currentTime - creationTime > 5000) {
+                      System.out.println("FOOD");
+                      statusMessage = "different message";
+                      System.out.println(statusMessage);
+                    }
+                }
+            },
+            3000,   // run first occurrence immediately
+            6000);  // run every six seconds
+            System.out.println(statusMessage);
+            model.put("statusMessage", statusMessage);
+
+
+          String inputtedUsername = request.queryParams("tamagotchiName");
+          request.session().attribute("inputtedUsername", inputtedUsername);
+          model.put("inputtedUsername", inputtedUsername);
+
+          model.put("template", "templates/play.vtl");
+          return new ModelAndView(model, "templates/play.vtl");
+        }, new VelocityTemplateEngine());
+
+
+
+      } //close main method
+
+
+
+
+
+    } //close main class

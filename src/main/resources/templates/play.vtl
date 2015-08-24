@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Template</title>
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>
+    <link rel='stylesheet' href='app.css'>
+
+      <script type="text/JavaScript">
+      <!--
+      function timedRefresh(timeoutPeriod) {
+        setTimeout("location.reload(true);",timeoutPeriod);
+      }
+      //   -->
+</script>
+</head>
+  <body onload="JavaScript:timedRefresh(5000);">
+    <div class="container">
+      <ul>
+      #foreach ($message in $messages) <!-- loop through arraylist-->
+        <li>$message $foodLevel</li>
+      #end
+      </ul>
+      <form action='/play' method='post'>
+        <input type="hidden" name="feedAction" value="feedAction">
+        <button type="submit" class="btn btn-info">Quick! Feed your pet!</button>
+      </form>
+
+    </div>
+  </body>
+</html>
